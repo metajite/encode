@@ -8,19 +8,19 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract VolcanoToken is ERC721, Ownable {
 
     uint256 tokenID=0;
-    struct MetaData {
+    struct TokenMetaData {
         uint256 timestamp;
         uint256 tokenID;
         string tokenURI;
     }
 
-    mapping(address => MetaData[]) public ownerShipRecords;
+    mapping(address => TokenMetaData[]) public ownerShipRecords;
     
     constructor() ERC721 ("VolcanoToken", "VLT"){
     }
     
     function mintToken(address _to) public {
-        MetaData memory _meta;
+        TokenMetaData memory _meta;
         _safeMint(_to, tokenID);
         _meta.timestamp = block.timestamp;
         _meta.tokenID = tokenID;
@@ -31,16 +31,16 @@ contract VolcanoToken is ERC721, Ownable {
     }
     
     function burnToken(uint256 _tokenID) public{
+        require(msg.sender == ownerOf(_tokenID), "Only owner can burn the token");
         _burn(_tokenID);
     }
     
-    function removeReferences(uint256 _tokenID) private {
+    function removeReferences(uint256 _tokenID) internal {
         uint max = ownerShipRecords[msg.sender].length;
         for (uint i=0; i<max; i++) {
-            MetaData[] memory _arr = ownerShipRecords[msg.sender];
-            if (_arr[i].tokenID == _tokenID){
-                _arr[i] = _arr[max - 1];
-                _arr.pop();
+            if (ownerShipRecords[msg.sender][i].tokenID == _tokenID){
+                ownerShipRecords[msg.sender][i] = ownerShipRecords[msg.sender][max - 1];
+                ownerShipRecords[msg.sender].pop();
             }
         }
     }
