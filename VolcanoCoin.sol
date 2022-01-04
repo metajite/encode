@@ -5,6 +5,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
+
 contract VolcanoCoin is ERC20, Ownable{
 
     mapping (address => Payment[]) public userPaymentRecords;
@@ -18,7 +19,7 @@ contract VolcanoCoin is ERC20, Ownable{
     event NewTotalSupply(uint _newTotal);
     event PaymentArrayContent(uint _index, uint _amount);
 
-    constructor(uint initialSupply) ERC20("VolcanoCoin", "VLC"){
+    constructor(uint initialSupply) ERC20("Volcano Coin", "VLC"){
         _mint(msg.sender, initialSupply);
     }
     
@@ -26,8 +27,9 @@ contract VolcanoCoin is ERC20, Ownable{
         _mint(msg.sender, _additionalSupply);
     }
     
-    function transerToken(uint amountToTransfer, address recipientAddress) public {
+    function transferToken(address recipientAddress, uint amountToTransfer) public  {
         
+        require(recipientAddress != address(0), "Cannot send to zero address");
         Payment memory _payment;
         _payment.transferAmount = amountToTransfer;
         _payment.recipientAddress = recipientAddress;
